@@ -1,3 +1,4 @@
+# CI Pipeline - Updated to validate eslint installation
 name: Enterprise CI Pipeline
 
 on:
