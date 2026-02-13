@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  namespace: cms-prod
+  labels:
+    app: cms-backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: cms-backend
+  template:
+    metadata:
+      labels:
+        app: cms-backend
+    spec:
+      containers:
+      - name: cms-backend
+        image: your-registry/cms-backend:latest
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 5000
+        envFrom:
+        - configMapRef:
+            name: cms-config
+        - secretRef:
+            name: cms-secrets
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          failureThreshold: 30
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 5000 # Ideally create /ready endpoint, reuse /health for now if simple check
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        volumeMounts:
+        - name: uploads-volume
+          mountPath: /usr/src/app/uploads
+      volumes:
+      - name: uploads-volume
+        persistentVolumeClaim:
+          claimName: cms-uploads-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+  namespace: cms-prod
+spec:
+  selector:
+    app: cms-backend
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+  type: ClusterIP
