@@ -25,11 +25,11 @@ The system follows a layered architecture pattern ensuring separation of concern
 
 ```mermaid
 graph TD
-    Client[React Frontend (Vite)] -->|Status/Data| LB[Nginx Load Balancer]
-    LB -->|API Requests| API[Node.js Backend API]
-    API -->|Auth/Logic| Service[Business Logic Layer]
-    Service -->|Query| DB[(MySQL Database)]
-    Service -->|Cache| Redis[(Redis Cache)]
+    Client["React Frontend (Vite)"] -->|Status/Data| LB["Nginx Load Balancer"]
+    LB -->|API Requests| API["Node.js Backend API"]
+    API -->|Auth/Logic| Service["Business Logic Layer"]
+    Service -->|Query| DB[("MySQL Database")]
+    Service -->|"Cache"| Redis[("Redis Cache")]
     
     subgraph DevOps Infrastructure
     Docker[Docker Containers]

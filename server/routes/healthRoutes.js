@@ -29,17 +29,17 @@ const metrics = {
 // Middleware to track metrics
 export const metricsMiddleware = (req, res, next) => {
   const startTime = Date.now();
-  
+
   res.on('finish', () => {
     const duration = Date.now() - startTime;
-    
+
     metrics.requestsTotal++;
     if (res.statusCode < 400) {
       metrics.requestsSuccess++;
     } else {
       metrics.requestsFailed++;
     }
-    
+
     // Keep last 1000 response times for avg calculation
     metrics.responseTimes.push(duration);
     if (metrics.responseTimes.length > 1000) {
@@ -49,7 +49,7 @@ export const metricsMiddleware = (req, res, next) => {
       metrics.responseTimes.reduce((a, b) => a + b, 0) / metrics.responseTimes.length
     );
   });
-  
+
   next();
 };
 
@@ -76,9 +76,9 @@ router.get('/ready', async (req, res) => {
     database: { status: 'unknown', latency: null },
     server: { status: 'healthy' },
   };
-  
+
   let isReady = true;
-  
+
   // Check database
   try {
     const dbHealth = await db.healthCheck();
@@ -96,9 +96,9 @@ router.get('/ready', async (req, res) => {
     };
     isReady = false;
   }
-  
+
   const statusCode = isReady ? 200 : 503;
-  
+
   res.status(statusCode).json({
     status: isReady ? 'ready' : 'not_ready',
     timestamp: new Date().toISOString(),
@@ -115,7 +115,7 @@ router.get('/live', (req, res) => {
   // Check for critical conditions that indicate process should be restarted
   const memoryUsage = process.memoryUsage();
   const heapUsedPercent = (memoryUsage.heapUsed / memoryUsage.heapTotal) * 100;
-  
+
   // If heap usage is over 95%, consider unhealthy
   if (heapUsedPercent > 95) {
     logger.warn('High memory usage detected', { heapUsedPercent });
@@ -125,7 +125,7 @@ router.get('/live', (req, res) => {
       heapUsedPercent: Math.round(heapUsedPercent),
     });
   }
-  
+
   res.status(200).json({
     status: 'alive',
     timestamp: new Date().toISOString(),
@@ -140,22 +140,22 @@ router.get('/live', (req, res) => {
 router.get('/metrics', async (req, res) => {
   const memoryUsage = process.memoryUsage();
   const dbStats = db.getPoolStats();
-  
+
   res.status(200).json({
     timestamp: new Date().toISOString(),
     uptime: Math.floor((Date.now() - serverStartTime) / 1000),
-    
+
     // Request metrics
     requests: {
       total: metrics.requestsTotal,
       success: metrics.requestsSuccess,
       failed: metrics.requestsFailed,
-      successRate: metrics.requestsTotal > 0 
+      successRate: metrics.requestsTotal > 0
         ? Math.round((metrics.requestsSuccess / metrics.requestsTotal) * 100 * 100) / 100
         : 100,
       avgResponseTimeMs: metrics.avgResponseTime,
     },
-    
+
     // Memory metrics
     memory: {
       heapUsedMB: Math.round(memoryUsage.heapUsed / 1024 / 1024),
@@ -163,7 +163,7 @@ router.get('/metrics', async (req, res) => {
       rssMB: Math.round(memoryUsage.rss / 1024 / 1024),
       externalMB: Math.round(memoryUsage.external / 1024 / 1024),
     },
-    
+
     // Database metrics
     database: {
       queriesExecuted: dbStats.queriesExecuted,
@@ -174,7 +174,7 @@ router.get('/metrics', async (req, res) => {
       pendingRequests: dbStats.pendingRequests,
       isHealthy: dbStats.isHealthy,
     },
-    
+
     // Environment
     environment: config.server.env,
     nodeVersion: process.version,
@@ -196,4 +196,3 @@ router.get('/info', (req, res) => {
 });
 
 export default router;
-export { metricsMiddleware };
