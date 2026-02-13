@@ -1,26 +1,81 @@
+# Dependencies
+node_modules/
+# Keep package-lock.json unless conflicting
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Build Artifacts
+dist/
+build/
+out/
+.next/
+*.tsbuildinfo
+
+# Environment Variables - CRITICAL
+.env
+.env.production
+.env.development
+.env.local
+.env.*.local
+*.env
+env/
+
 # Logs
-logs
-*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+logs/
+*.log
+*.log.*
 
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# OS
 .DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*.iml
+.project
+.classpath
+
+# Docker
+docker-compose.override.yml
+.docker/
+
+# Database Data (Volume Mounts)
+mysql-data/
+postgres-data/
+redis-data/
+mongo-data/
+
+# SQL Dumps (Moved to db_backups but ignored)
+*.sql
+*.sqlite
+*.sqlite3
+db_backups/
+
+# Testing
+coverage/
+.nyc_output/
+junit.xml
+
+# Temporary & Uploads
+tmp/
+temp/
+# Ensure uploads folder structure is kept but files ignored if needed (usually uploads are user generated content)
+server/uploads/*
+!server/uploads/.gitkeep
+client/public/uploads/*
+!client/public/uploads/.gitkeep
+
+# Windows
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
-*.sw?
-
-.env
+*.user
