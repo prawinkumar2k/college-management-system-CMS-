@@ -40,7 +40,6 @@
     "uuid": "^13.0.0"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
     "cross-env": "^10.1.0",
     "eslint": "^8.57.1",
     "eslint-plugin-node": "^11.1.0",
