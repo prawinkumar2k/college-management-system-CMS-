@@ -31,7 +31,9 @@ jobs:
       # =================================================================
       - name: Install Backend Dependencies
         working-directory: ./server
-        run: npm install
+        run: |
+           npm install --include=dev
+           ls -la node_modules/.bin || echo "node_modules/.bin not found"
 
       - name: Lint Backend  (Optional)
         working-directory: ./server
