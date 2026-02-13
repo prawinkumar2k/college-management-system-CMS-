@@ -31,7 +31,7 @@ jobs:
       # =================================================================
       - name: Install Backend Dependencies
         working-directory: ./server
-        run: npm ci
+        run: npm install
 
       - name: Lint Backend  (Optional)
         working-directory: ./server
