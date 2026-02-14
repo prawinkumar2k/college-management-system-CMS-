@@ -18,33 +18,26 @@ export default defineConfig({
   },
   build: {
     // Production optimizations
-    target: 'es2020',
+    target: 'esnext',
     outDir: 'dist',
     assetsDir: 'assets',
     sourcemap: false,
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-      },
-    },
+    minify: 'esbuild',
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Split vendor chunks for better caching
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-ui': ['react-hot-toast', 'react-select', 'react-datepicker'],
-          'vendor-charts': ['apexcharts'],
-          'vendor-utils': ['axios', 'jspdf', 'html2canvas'],
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
         },
       },
     },
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 2000,
   },
   // Performance hints
   esbuild: {
-    logOverride: { 'this-is-undefined-in-esm': 'silent' }
+    logOverride: { 'this-is-undefined-in-esm': 'silent' },
+    target: 'esnext'
   }
 })
 
